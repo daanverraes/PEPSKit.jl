@@ -79,6 +79,11 @@ function MPSKit.leading_boundary(state, alg::CTMRG, envinit=CTMRGEnv(state))
     return envfix
 end
 
+expand_degeneracies(V::ComplexSpace; fact=1.5) = ComplexSpace(ceil(Int, dim(V) * fact))
+function expand_degeneracies(V::GradedSpace; fact=1.5)
+    return Vect[sectortype(V)](s => ceil(Int, dim(V, s) * fact) for s in sectors(V))
+end
+
 # Fix gauge of corner end edge tensors from last and second last CTMRG iteration
 function gauge_fix(envprev::CTMRGEnv{C,T}, envfinal::CTMRGEnv{C,T}) where {C,T}
     # Check if spaces in envprev and envfinal are the same
@@ -107,7 +112,12 @@ function gauge_fix(envprev::CTMRGEnv{C,T}, envfinal::CTMRGEnv{C,T}) where {C,T}
 
         # Random MPS of same bond dimension
         M = map(Tsfinal) do t
-            TensorMap(randn, scalartype(t), codomain(t) ← domain(t))
+            P = ProductSpace{spacetype(t),numind(t) - 2}(
+                space.(Ref(t), Base.front(Base.tail(TensorKit.allind(t))))
+            )
+            Vₗ = expand_degeneracies(MPSKit._firstspace(t))
+            Vᵣ = expand_degeneracies(MPSKit._lastspace(t))
+            return TensorMap(randn, scalartype(t), Vₗ ⊗ P ← Vᵣ)
         end
 
         # Find right fixed points of mixed transfer matrices
