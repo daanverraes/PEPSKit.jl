@@ -73,10 +73,14 @@ function MPSKit.leading_boundary(state, alg::CTMRG, envinit=CTMRGEnv(state))
         alg.trscheme, alg.tol, alg.maxiter, alg.miniter, alg.verbosity, fixedspace=true
     )
     env′, = ctmrg_iter(state, env, alg_fixed)
-    envfix = gauge_fix(env, env′)
-    check_elementwise_convergence(env, envfix; atol=alg.tol^(3 / 4)) ||
-        @warn "CTMRG did not converge elementwise."
-    return envfix
+
+    # envfix = gauge_fix(env, env′)
+    # check_elementwise_convergence(env, envfix; atol=alg.tol^(3 / 4)) ||
+    #     @warn "CTMRG did not converge elementwise."
+    # return envfix
+
+    # skip gauge fixing altogether
+    return env′
 end
 
 expand_degeneracies(V::ComplexSpace; fact=1.5) = ComplexSpace(ceil(Int, dim(V) * fact))
