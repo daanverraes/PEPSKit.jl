@@ -139,7 +139,7 @@ function fpgrad(∂F∂x, ∂f∂x, ∂f∂A, _, alg::GeomSum)
         g = ∂f∂x(g)
         Σₙ = ∂f∂A(g)
         dx += Σₙ
-        ϵnew = norm(Σₙ)  # TODO: normalize this error?
+        ϵnew = norm(Σₙ) / norm(dx)
         Δϵ = ϵ - ϵnew
         alg.verbosity > 1 &&
             @printf("Gradient iter: %3d   ‖Σₙ‖: %.2e   Δ‖Σₙ‖: %.2e\n", i, ϵnew, Δϵ)

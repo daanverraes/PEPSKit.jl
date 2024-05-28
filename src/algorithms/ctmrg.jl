@@ -74,12 +74,12 @@ function MPSKit.leading_boundary(state, alg::CTMRG, envinit=CTMRGEnv(state))
     )
     env′, = ctmrg_iter(state, env, alg_fixed)
 
-    envfix = gauge_fix(env, env′)
-    check_elementwise_convergence(env, envfix; atol=alg.tol^(3 / 4)) ||
-        @warn "CTMRG did not converge elementwise."
+    # envfix = gauge_fix(env, env′)
+    # check_elementwise_convergence(env, envfix; atol=alg.tol^(3 / 4)) ||
+    #     @warn "CTMRG did not converge elementwise."
 
-    # # skip gauge fixing altogether
-    # envfix = env′
+    # skip gauge fixing altogether
+    envfix = env′
 
     return envfix
 end
