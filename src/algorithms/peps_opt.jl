@@ -103,9 +103,7 @@ function ctmrg_gradient(
 
     # find partial gradients of single ctmrg iteration
     _, envvjp = pullback(peps, envs′) do A, x
-        # skip gauge-fixing for now
-        # return gauge_fix(x, ctmrg_iter(A, x, alg.boundary_alg)[1])
-        return ctmrg_iter(A, x, alg.boundary_alg)[1]
+        return gauge_fix(x, ctmrg_iter(A, x, alg.boundary_alg)[1])
     end
     ∂f∂A(x) = InfinitePEPS(envvjp(x)[1]...)
     ∂f∂x(x) = CTMRGEnv(envvjp(x)[2]...)
